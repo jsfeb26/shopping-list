@@ -66,7 +66,7 @@ app.get('/items', function(req, res) {
 });
 
 app.post('/items', jsonParser, function(req, res) {
-   if (!req.body) {
+   if (!req.body || !req.body.name) {
        return res.sendStatus(400);
    }
    
@@ -83,11 +83,11 @@ app.delete('/items/:id', function(req, res) {
         return res.sendStatus(400);
     }
     
-    res.status(204).json(deletedItem);
+    res.status(200).json(deletedItem);
 });
 
 app.put('/items/:id', jsonParser, function(req, res) {
-    if (!req.body) {
+    if (!req.body || !req.body.name) {
         return res.sendStatus(400);
     }
     
@@ -97,10 +97,13 @@ app.put('/items/:id', jsonParser, function(req, res) {
     var updatedItem = storage.update(updateItemName, updateId);
     
     if (!updatedItem) {
-        return res.sendStatus(404);
+        return res.sendStatus(400);
     }
     
     res.status(200).json(updatedItem);
-})
+});
 
 app.listen(process.env.PORT || 8080);
+
+exports.app = app;
+exports.storage = storage;
